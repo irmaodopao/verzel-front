@@ -3,9 +3,15 @@ import 'package:flutter/material.dart';
 class DefaultPage extends StatelessWidget {
   final Widget body;
   final String pageTitle;
+  final bool isFabVisible;
+  final Function()? onPressed;
 
   // ignore: use_key_in_widget_constructors
-  const DefaultPage({required this.body, required this.pageTitle});
+  const DefaultPage(
+      {required this.body,
+      required this.pageTitle,
+      this.isFabVisible = false,
+      this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -22,6 +28,13 @@ class DefaultPage extends StatelessWidget {
           child: SingleChildScrollView(
             child: body,
           )),
+      floatingActionButton: isFabVisible
+          ? FloatingActionButton(
+              onPressed: onPressed,
+              tooltip: 'Adicionar veículo',
+              child: const Icon(Icons.add),
+            )
+          : null,
     );
   }
 }

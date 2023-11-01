@@ -44,7 +44,8 @@ class VeiculoService{
 
   static deleteVeiculo(Veiculo? veiculo) async{
     Response res = await delete(
-      Uri.parse("$url/${veiculo?.id}")
+      Uri.parse("$url/${veiculo?.id}"),
+      headers: {'Content-Type': 'application/json; charset=UTF-8',}
     );
     if (res.statusCode == 200) {
       print("ok");
