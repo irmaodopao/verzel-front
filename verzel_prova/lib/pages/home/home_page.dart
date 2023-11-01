@@ -4,6 +4,7 @@ import 'package:verzel_prova/components/default_page/default_page.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
 import 'package:verzel_prova/models/veiculo.dart';
 import 'package:verzel_prova/pages/cadastro_veiculo/cadastro_veiculo.dart';
+import 'package:verzel_prova/pages/editar_veiculo/editar_veiculo.dart';
 import 'package:verzel_prova/services/veiculo_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePage extends State<HomePage> {
   bool isAdm = true;
 
- Future<void> _showDialogExclusao(Veiculo veiculo) async{
+  Future<void> _showDialogExclusao(Veiculo veiculo) async {
     return showDialog(
         context: context,
         builder: (conext) {
@@ -41,7 +42,7 @@ class _HomePage extends State<HomePage> {
                         buttonText: 'Cancelar'),
                     DefaultButton(
                         width: MediaQuery.of(conext).size.width * 0.25,
-                        onPressed: () async{
+                        onPressed: () async {
                           await VeiculoService.deleteVeiculo(veiculo);
                           Navigator.of(context).pop();
                         },
@@ -58,7 +59,8 @@ class _HomePage extends State<HomePage> {
   Widget build(BuildContext context) {
     return DefaultPage(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) => CadastroVeiculo()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => CadastroVeiculo()));
         },
         isFabVisible: true,
         pageTitle: "Lista de Veiculos",
@@ -70,7 +72,7 @@ class _HomePage extends State<HomePage> {
                   child: CircularProgressIndicator(),
                 );
               }
-              
+
               return ListView.builder(
                 shrinkWrap: true,
                 itemCount: veiculo.data!.length,
@@ -78,6 +80,10 @@ class _HomePage extends State<HomePage> {
                   return GestureDetector(
                     onTap: () => {
                       if (isAdm) {_showDialogExclusao(veiculo.data![i])}
+                    },
+                    onLongPress: () => {
+                      Navigator.of(context).push(
+                          MaterialPageRoute(builder: (_) => EditarVeiculo(veiculo.data![i])))
                     },
                     child: DefaultCard(
                         nome: veiculo.data![i].nome!,

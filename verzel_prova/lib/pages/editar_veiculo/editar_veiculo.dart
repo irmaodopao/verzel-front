@@ -6,19 +6,44 @@ import 'package:image_picker/image_picker.dart';
 import 'package:verzel_prova/components/default_input/default_input.dart';
 import 'package:verzel_prova/components/default_page/default_page.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
+import 'package:verzel_prova/models/veiculo.dart';
 
-class CadastroVeiculo extends StatefulWidget {
+class EditarVeiculo extends StatefulWidget {
+
+  Veiculo? veiculo;
+
+  EditarVeiculo(this.veiculo, {Key? key}) : super(key: key);
+
   @override
-  State<CadastroVeiculo> createState() => _CadastroVeiculo();
+  // ignore: no_logic_in_create_state
+  State<EditarVeiculo> createState() => _EditarVeiculo(veiculo);
 }
 
-class _CadastroVeiculo extends State<CadastroVeiculo> {
+class _EditarVeiculo extends State<EditarVeiculo> {
+
+  Veiculo? veiculo;
+ _EditarVeiculo(this.veiculo);
+
   TextEditingController nomeController = TextEditingController();
   TextEditingController modeloController = TextEditingController();
   TextEditingController marcaController = TextEditingController();
   TextEditingController valorController = TextEditingController();
 
   File? _image;
+  
+ 
+  
+
+  @override
+  initState(){
+    print(veiculo!.nome);
+    print(veiculo!.modelo);
+    print(veiculo!.marca);
+    nomeController.text = veiculo!.nome ?? "";
+    modeloController.text = veiculo!.modelo ?? "";
+    marcaController.text = veiculo!.marca ?? "";
+    valorController.text = veiculo!.valor!.toString();
+  }
 
   Future<void> pegarImagemGaleria() async {
     final picker = ImagePicker();
@@ -41,7 +66,7 @@ class _CadastroVeiculo extends State<CadastroVeiculo> {
   @override
   Widget build(BuildContext context) {
     return DefaultPage(
-        pageTitle: "Cadastro de veículo",
+        pageTitle: "Editar veículo",
         body: Column(children: [
           DefaultInput(
             labelText: 'Nome',
