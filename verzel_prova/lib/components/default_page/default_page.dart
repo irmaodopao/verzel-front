@@ -15,8 +15,8 @@ class DefaultPage extends StatelessWidget {
       ),
       body: Padding(
           padding: const EdgeInsets.only(
-            left: 40,
-            right: 40,
+            left: 20,
+            right: 20,
             top: 40,
           ),
           child: SingleChildScrollView(

@@ -12,7 +12,6 @@ class VeiculoService{
     );
     if (res.statusCode == 200) {
       List result = jsonDecode(utf8.decode(res.bodyBytes));
-      // print(result);
       return result.map((e) => Veiculo.fromJson(e)).toList();
     } else {
       throw Exception(res.reasonPhrase);
