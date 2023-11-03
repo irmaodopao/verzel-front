@@ -20,8 +20,19 @@ class Veiculo{
     foto: json["foto"],
   );
 
-   Map<dynamic, dynamic> toMap() {
+   Map<dynamic, dynamic> toMapWithoutId() {
     return {
+      'nome': nome,
+      'marca': marca,
+      'modelo': modelo,
+      'valor':valor,
+      'foto':foto
+    };
+  }
+
+  Map<dynamic, dynamic> toMapWithId() {
+    return {
+      'id' : id,
       'nome': nome,
       'marca': marca,
       'modelo': modelo,

@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:verzel_prova/components/default_input/default_input.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
@@ -9,6 +12,8 @@ class DefaultForm extends StatelessWidget {
   final TextEditingController modeloController;
   final TextEditingController marcaController;
   final TextEditingController valorController;
+  final bool isEditing;
+  final String? image;
 
   const DefaultForm(
       {Key? key,
@@ -17,7 +22,9 @@ class DefaultForm extends StatelessWidget {
       required this.nomeController,
       required this.modeloController,
       required this.marcaController,
-      required this.valorController})
+      required this.valorController,
+      this.isEditing = false,
+      required this.image})
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -63,10 +70,10 @@ class DefaultForm extends StatelessWidget {
           child: Container(
             height: 50,
             color: Colors.white,
-            child: const Align(
+            child: Align(
                 alignment: Alignment.center,
                 child: Text(
-                  "Foto do veículo",
+                  image == null ? "Foto do veículo" : "Editar foto do veículo",
                   textAlign: TextAlign.center,
                 )),
           ),
@@ -75,8 +82,14 @@ class DefaultForm extends StatelessWidget {
       const SizedBox(
         height: 15,
       ),
+      if (image != null) 
+        Image.memory(base64Decode(image!)),
+      const SizedBox(
+        height: 15,
+      ),
       DefaultButton(
-          buttonText: 'Adicionar veículo', onPressed: onPressedButton),
+          buttonText: isEditing ? 'Editar veículo' : 'Adicionar veículo',
+          onPressed: onPressedButton),
       const SizedBox(
         height: 15,
       )

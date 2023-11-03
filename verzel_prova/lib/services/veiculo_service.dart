@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:verzel_prova/env/environments.dart';
 import 'package:verzel_prova/models/veiculo.dart';
 
 class VeiculoService {
-  static String url =
-      "http://ec2-15-228-78-229.sa-east-1.compute.amazonaws.com:8080/veiculo";
+  static String url = "${Environments.url}/veiculo";
 
   static Future<List<Veiculo>> getAll() async {
     Response res = await get(Uri.parse("$url/getAll"));
@@ -17,38 +17,36 @@ class VeiculoService {
     }
   }
 
-  static createVeiculo(Veiculo? veiculo) async {
-    // print(veiculo!.toMap());
+  static Future<void> createVeiculo(Veiculo? veiculo) async {
     Response res = await post(Uri.parse(url),
         headers: {
           "Accept": "application/json",
           "content-type": "application/json"
         },
-        body: jsonEncode(veiculo!.toMap()));
-    print(res.statusCode);
-    if (res.statusCode == 201) {
-      print("tudo certo!");
-    } else {
+        body: jsonEncode(veiculo!.toMapWithoutId()));
+    if (res.statusCode != 201) {
       throw Exception(res.reasonPhrase);
     }
   }
 
-  static updateVeiculo(Veiculo? veiculo) async {
-    Response res = await put(Uri.parse(url), body: jsonEncode(veiculo));
-    if (res.statusCode == 200) {
-      print("tudo certo!");
-    } else {
+  static Future<void> updateVeiculo(Veiculo? veiculo) async {
+    Response res = await put(Uri.parse(url),
+        headers: {
+          "Accept": "application/json",
+          "content-type": "application/json"
+        },
+        body: jsonEncode(veiculo!.toMapWithId()));
+      print(res.statusCode);
+    if (res.statusCode != 200) {
       throw Exception(res.reasonPhrase);
     }
   }
 
-  static deleteVeiculo(Veiculo? veiculo) async {
+  static Future<void> deleteVeiculo(Veiculo? veiculo) async {
     Response res = await delete(Uri.parse("$url/${veiculo?.id}"), headers: {
       'Content-Type': 'application/json; charset=UTF-8',
     });
-    if (res.statusCode == 200) {
-      print("ok");
-    } else {
+    if (res.statusCode != 200) {
       throw Exception(res.reasonPhrase);
     }
   }
