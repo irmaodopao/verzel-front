@@ -5,7 +5,6 @@ Front-end em Flutter com as seguintes funcionalidades disponíveis:
 - Ordenação por valor ✔️
 - Tela de login admnistrativo ✔️
 - CRUD de novos veículos ✔️
-- token JWT ✖️
 - token de request ✖️
 
 # Login ADM
