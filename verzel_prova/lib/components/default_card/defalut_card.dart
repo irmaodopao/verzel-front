@@ -1,6 +1,9 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:verzel_prova/utils/functions_utils.dart';
 
 class DefaultCard extends StatelessWidget {
   final String imagem;
@@ -40,10 +43,7 @@ class DefaultCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               height: 300,
-              child: Image.asset(
-                imagem,
-                fit: BoxFit.fill,
-              ),
+              child: Image.memory(base64Decode(imagem))
             ),
             Container(
               alignment: Alignment.centerLeft,
@@ -70,7 +70,7 @@ class DefaultCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    " ${valor}",
+                    " ${FunctionsUtils.maskDoubleToReal(valor)}",
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 25,

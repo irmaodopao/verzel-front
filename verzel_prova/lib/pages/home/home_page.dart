@@ -3,9 +3,11 @@ import 'package:verzel_prova/components/default_card/defalut_card.dart';
 import 'package:verzel_prova/components/default_page/default_page.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
 import 'package:verzel_prova/models/veiculo.dart';
-import 'package:verzel_prova/pages/cadastro_veiculo/cadastro_veiculo.dart';
-import 'package:verzel_prova/pages/editar_veiculo/editar_veiculo.dart';
+import 'package:verzel_prova/pages/cadastro_veiculo/cadastro_veiculo_page.dart';
+import 'package:verzel_prova/pages/editar_veiculo/editar_veiculo_page.dart';
+import 'package:verzel_prova/pages/login_adm/login_adm_page.dart';
 import 'package:verzel_prova/services/veiculo_service.dart';
+import 'package:verzel_prova/utils/functions_utils.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -17,7 +19,8 @@ class HomePage extends StatefulWidget {
 class _HomePage extends State<HomePage> {
   bool isAdm = true;
 
-  Future<void> _showDialogExclusao(Veiculo veiculo) async {
+  Future<void> _showDialogExclusao(
+      Veiculo veiculo, List<Veiculo> veiculoData) async {
     return showDialog(
         context: context,
         builder: (conext) {
@@ -44,6 +47,10 @@ class _HomePage extends State<HomePage> {
                         width: MediaQuery.of(conext).size.width * 0.25,
                         onPressed: () async {
                           await VeiculoService.deleteVeiculo(veiculo);
+                          setState(() {
+                            veiculoData.remove(veiculo);
+                          });
+                          // ignore: use_build_context_synchronously
                           Navigator.of(context).pop();
                         },
                         buttonText: 'Deletar')
@@ -58,42 +65,70 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultPage(
-        onPressed: () {
+      onPressed: () {
+        if (isAdm) {
           Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => CadastroVeiculo()));
-        },
-        isFabVisible: true,
-        pageTitle: "Lista de Veiculos",
-        body: FutureBuilder<List<Veiculo>>(
-            future: VeiculoService.getAll(),
-            builder: (context, veiculo) {
-              if (veiculo.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-
-              return ListView.builder(
-                shrinkWrap: true,
-                itemCount: veiculo.data!.length,
-                itemBuilder: (BuildContext context, int i) {
-                  return GestureDetector(
-                    onTap: () => {
-                      if (isAdm) {_showDialogExclusao(veiculo.data![i])}
-                    },
-                    onLongPress: () => {
-                      Navigator.of(context).push(
-                          MaterialPageRoute(builder: (_) => EditarVeiculo(veiculo.data![i])))
-                    },
-                    child: DefaultCard(
-                        nome: veiculo.data![i].nome!,
-                        marca: veiculo.data![i].marca!,
-                        modelo: veiculo.data![i].modelo!,
-                        valor: veiculo.data![i].valor!,
-                        imagem: "assets/images/polo.jpg"),
-                  );
-                },
+              .push(MaterialPageRoute(builder: (_) => const CadastroVeiculoPage()));
+        } else {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (_) => const LoginAdmPage()));
+        }
+      },
+      isFabVisible: true,
+      pageTitle: "Lista de Veiculos",
+      body: SingleChildScrollView(
+        child: FutureBuilder<List<Veiculo>>(
+          future: VeiculoService.getAll(),
+          builder: (context, veiculos) {
+            if (veiculos.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
               );
-            }));
+            }
+            if (veiculos.data!.isEmpty || veiculos.hasError) {
+              return const Center(
+                child: Text("Sem veículos na vitrine"),
+              );
+            }
+            return Column(
+              children: FunctionsUtils.ordenarPorValor(veiculos.data!)!
+                  .map((veiculo) {
+                return GestureDetector(
+                  onTap: () {
+                    if (isAdm) {
+                      _showDialogExclusao(veiculo, veiculos.data!);
+                    } else {
+                      FunctionsUtils.defaultShowDialog(
+                          context,
+                          'Atenção!',
+                          'Você precisa estar logado para executar essa ação!',
+                          true);
+                    }
+                  },
+                  onLongPress: () {
+                    if (isAdm) {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => EditarVeiculoPage(veiculo)));
+                    } else {
+                      FunctionsUtils.defaultShowDialog(
+                          context,
+                          'Atenção!',
+                          'Você precisa estar logado para executar essa ação!',
+                          true);
+                    }
+                  },
+                  child: DefaultCard(
+                      nome: veiculo.nome!,
+                      marca: veiculo.marca!,
+                      modelo: veiculo.modelo!,
+                      valor: veiculo.valor!,
+                      imagem: veiculo.foto!),
+                );
+              }).toList(),
+            );
+          },
+        ),
+      ),
+    );
   }
 }
