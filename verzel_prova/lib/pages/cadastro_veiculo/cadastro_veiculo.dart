@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:verzel_prova/components/default_form/default_form.dart';
 import 'package:verzel_prova/components/default_input/default_input.dart';
 import 'package:verzel_prova/components/default_page/default_page.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
+import 'package:verzel_prova/models/veiculo.dart';
+import 'package:verzel_prova/pages/home/home_page.dart';
+import 'package:verzel_prova/services/veiculo_service.dart';
 
 class CadastroVeiculo extends StatefulWidget {
   @override
@@ -24,7 +28,6 @@ class _CadastroVeiculo extends State<CadastroVeiculo> {
     final picker = ImagePicker();
     // ignore: deprecated_member_use
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
-    
 
     if (pickedFile != null) {
       setState(() {
@@ -37,68 +40,37 @@ class _CadastroVeiculo extends State<CadastroVeiculo> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return DefaultPage(
         pageTitle: "Cadastro de veículo",
-        body: Column(children: [
-          DefaultInput(
-            labelText: 'Nome',
-            controller: nomeController,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          DefaultInput(
-            labelText: 'Modelo',
-            controller: modeloController,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          DefaultInput(
-            labelText: 'Marca',
-            controller: marcaController,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          DefaultInput(
-            textInputType: TextInputType.number,
-            labelText: 'Valor',
-            controller: valorController,
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          GestureDetector(
-            onTap: () {
+        body: DefaultForm(
+            onPressedButton: () {
+              criarVeiculo();
+            },
+            onTapButton: () {
               pegarImagemGaleria();
             },
-            child: Container(
-              width: MediaQuery.of(context).size.width,
-              padding: const EdgeInsets.all(50),
-              color: Colors.grey,
-              child: Container(
-                height: 50,
-                color: Colors.white,
-                child: const Align(
-                  alignment: Alignment.center,
-                    child: Text(
-                  "Foto do veículo",
-                  textAlign: TextAlign.center,
-                )),
-              ),
-            ),
-          ),
-          const SizedBox(
-            height: 15,
-          ),
-          DefaultButton(buttonText: 'Adicionar', onPressed: () {}),
-          const SizedBox(
-            height: 15,
-          )
-        ]));
+            nomeController: nomeController,
+            modeloController: modeloController,
+            marcaController: marcaController,
+            valorController: valorController));
+  }
+
+  criarVeiculo() async {
+    Veiculo veiculo = Veiculo();
+    veiculo.nome = nomeController.text;
+    veiculo.modelo = modeloController.text;
+    veiculo.marca = marcaController.text;
+    veiculo.valor = double.parse(valorController.text);
+    veiculo.foto = "123";
+    await VeiculoService.createVeiculo(veiculo);
+    // ignore: use_build_context_synchronously
+    Navigator.of(context).pop();
+    // ignore: use_build_context_synchronously
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
   }
 }

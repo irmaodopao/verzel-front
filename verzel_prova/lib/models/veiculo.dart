@@ -20,5 +20,15 @@ class Veiculo{
     foto: json["foto"],
   );
 
+   Map<dynamic, dynamic> toMap() {
+    return {
+      'nome': nome,
+      'marca': marca,
+      'modelo': modelo,
+      'valor':valor,
+      'foto':foto
+    };
+  }
+
 
 }

@@ -36,9 +36,6 @@ class _EditarVeiculo extends State<EditarVeiculo> {
 
   @override
   initState(){
-    print(veiculo!.nome);
-    print(veiculo!.modelo);
-    print(veiculo!.marca);
     nomeController.text = veiculo!.nome ?? "";
     modeloController.text = veiculo!.modelo ?? "";
     marcaController.text = veiculo!.marca ?? "";
@@ -120,7 +117,7 @@ class _EditarVeiculo extends State<EditarVeiculo> {
           const SizedBox(
             height: 15,
           ),
-          DefaultButton(buttonText: 'Adicionar', onPressed: () {}),
+          DefaultButton(buttonText: 'Editar', onPressed: () {}),
           const SizedBox(
             height: 15,
           )
