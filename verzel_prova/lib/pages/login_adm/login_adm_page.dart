@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:verzel_prova/components/default_input/default_input.dart';
 import 'package:verzel_prova/components/default_page/default_page.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
+import 'package:verzel_prova/models/admin.dart';
+import 'package:verzel_prova/services/admin_service.dart';
 
 class LoginAdmPage extends StatefulWidget {
   const LoginAdmPage({Key? key}) : super(key: key);
@@ -34,6 +36,8 @@ class _LoginAdmPage extends State<LoginAdmPage> {
               height: 15,
             ),
             DefaultInput(
+              textInputType: TextInputType.text,
+              obscureText: true,
               labelText: 'Senha',
               controller: senhaController,
             ),
@@ -44,11 +48,21 @@ class _LoginAdmPage extends State<LoginAdmPage> {
                 buttonText: 'Entrar',
                 onPressed: () {
                   onLoginAdm();
+                  Navigator.of(context).pop();
                 }),
           ],
         ));
   }
-  onLoginAdm() async{
 
+  onLoginAdm() async {
+    Admin adm = Admin();
+    adm.login = userController.text;
+    adm.senha = senhaController.text;
+    var statusCode = await AdminService.login(adm);
+    if (statusCode == 403) {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Login não autorizado')));
+    }
   }
 }

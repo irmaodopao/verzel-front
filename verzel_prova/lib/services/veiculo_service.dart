@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verzel_prova/env/environments.dart';
 import 'package:verzel_prova/models/veiculo.dart';
 
@@ -18,10 +19,13 @@ class VeiculoService {
   }
 
   static Future<void> createVeiculo(Veiculo? veiculo) async {
+    var prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
     Response res = await post(Uri.parse(url),
         headers: {
           "Accept": "application/json",
-          "content-type": "application/json"
+          "content-type": "application/json",
+          "Authorization": "Bearer $token",
         },
         body: jsonEncode(veiculo!.toMapWithoutId()));
     if (res.statusCode != 201) {
@@ -30,21 +34,26 @@ class VeiculoService {
   }
 
   static Future<void> updateVeiculo(Veiculo? veiculo) async {
+    var prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
     Response res = await put(Uri.parse(url),
         headers: {
           "Accept": "application/json",
-          "content-type": "application/json"
+          "content-type": "application/json",
+          "Authorization": "Bearer $token",
         },
         body: jsonEncode(veiculo!.toMapWithId()));
-      print(res.statusCode);
     if (res.statusCode != 200) {
       throw Exception(res.reasonPhrase);
     }
   }
 
   static Future<void> deleteVeiculo(Veiculo? veiculo) async {
+    var prefs = await SharedPreferences.getInstance();
+    var token = prefs.getString('token');
     Response res = await delete(Uri.parse("$url/${veiculo?.id}"), headers: {
       'Content-Type': 'application/json; charset=UTF-8',
+      "Authorization": "Bearer $token",
     });
     if (res.statusCode != 200) {
       throw Exception(res.reasonPhrase);

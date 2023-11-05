@@ -8,12 +8,14 @@ class DefaultInput extends StatelessWidget{
   final TextEditingController? controller;
   final Function()? onEditingComplete;
   final TextInputType? textInputType;
+  final bool obscureText;
 
-  const DefaultInput({required this.labelText,this.controller, this.onEditingComplete,this.textInputType});
+  const DefaultInput({required this.labelText,this.controller, this.onEditingComplete,this.textInputType,this.obscureText = false});
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      obscureText: obscureText,
       keyboardType: textInputType,
       onEditingComplete: onEditingComplete,
       controller: controller,
