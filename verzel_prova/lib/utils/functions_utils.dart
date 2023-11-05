@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
@@ -10,7 +12,7 @@ class FunctionsUtils {
   }
 
   static String maskDoubleToReal(double valor) {
-    final mask =  NumberFormat('#,##0.00', 'pt_BR');
+    final mask = NumberFormat('#,##0.00', 'pt_BR');
     return mask.format(valor);
   }
 
@@ -52,5 +54,23 @@ class FunctionsUtils {
             )),
           );
         });
+  }
+
+  static bool isTokenExpired(String token) {
+    List<String> tokenParts = token.split('.');
+    if (tokenParts.length != 3) {
+      return true;
+    }
+    String decodedPayload = String.fromCharCodes(base64Url.decode(tokenParts[1]));
+    Map<String, dynamic> payloadMap = jsonDecode(decodedPayload);
+
+    if (payloadMap.containsKey('exp')) {
+      int expiryTimeInSeconds = payloadMap['exp'];
+      DateTime expiryDateTime =
+          DateTime.fromMillisecondsSinceEpoch(expiryTimeInSeconds * 1000);
+      return DateTime.now().isAfter(expiryDateTime);
+    } else {
+      return true;
+    }
   }
 }

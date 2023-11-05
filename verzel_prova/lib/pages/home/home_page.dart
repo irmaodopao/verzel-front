@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verzel_prova/components/default_card/defalut_card.dart';
 import 'package:verzel_prova/components/default_page/default_page.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
@@ -6,6 +7,7 @@ import 'package:verzel_prova/models/veiculo.dart';
 import 'package:verzel_prova/pages/cadastro_veiculo/cadastro_veiculo_page.dart';
 import 'package:verzel_prova/pages/editar_veiculo/editar_veiculo_page.dart';
 import 'package:verzel_prova/pages/login_adm/login_adm_page.dart';
+import 'package:verzel_prova/services/admin_service.dart';
 import 'package:verzel_prova/services/veiculo_service.dart';
 import 'package:verzel_prova/utils/functions_utils.dart';
 
@@ -17,7 +19,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePage extends State<HomePage> {
-  bool isAdm = true;
+  bool isAdm = false;
+
+  String? token;
 
   Future<void> _showDialogExclusao(
       Veiculo veiculo, List<Veiculo> veiculoData) async {
@@ -65,11 +69,15 @@ class _HomePage extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return DefaultPage(
-      onPressed: () {
-        if (isAdm) {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (_) => const CadastroVeiculoPage()));
+      onPressed: () async {
+        var prefs = await SharedPreferences.getInstance();
+        token = prefs.getString('token');
+        if (token != null && !FunctionsUtils.isTokenExpired(token!)) {
+          // ignore: use_build_context_synchronously
+          Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const CadastroVeiculoPage()));
         } else {
+          // ignore: use_build_context_synchronously
           Navigator.of(context)
               .push(MaterialPageRoute(builder: (_) => const LoginAdmPage()));
         }
@@ -94,10 +102,13 @@ class _HomePage extends State<HomePage> {
               children: FunctionsUtils.ordenarPorValor(veiculos.data!)!
                   .map((veiculo) {
                 return GestureDetector(
-                  onTap: () {
-                    if (isAdm) {
+                  onTap: () async{
+                    var prefs = await SharedPreferences.getInstance();
+                    token = prefs.getString('token');
+                    if (token != null && !FunctionsUtils.isTokenExpired(token!)) {
                       _showDialogExclusao(veiculo, veiculos.data!);
                     } else {
+                      // ignore: use_build_context_synchronously
                       FunctionsUtils.defaultShowDialog(
                           context,
                           'Atenção!',
@@ -105,11 +116,15 @@ class _HomePage extends State<HomePage> {
                           true);
                     }
                   },
-                  onLongPress: () {
-                    if (isAdm) {
+                  onLongPress: () async{
+                    var prefs = await SharedPreferences.getInstance();
+                    token = prefs.getString('token');
+                    if (token !=null && !FunctionsUtils.isTokenExpired(token!)) {
+                      // ignore: use_build_context_synchronously
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (_) => EditarVeiculoPage(veiculo)));
                     } else {
+                      // ignore: use_build_context_synchronously
                       FunctionsUtils.defaultShowDialog(
                           context,
                           'Atenção!',

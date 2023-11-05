@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:http/http.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verzel_prova/env/environments.dart';
 import 'package:verzel_prova/models/admin.dart';
 
@@ -16,4 +17,22 @@ class AdminService {
       throw Exception(res.reasonPhrase);
     }
   }
+
+  static Future<dynamic> login(Admin? adm) async {
+    final prefs = await SharedPreferences.getInstance();
+    Response res = await post(
+      Uri.parse("$url/login"),
+      body: jsonEncode(adm!.toMapWithoutId()),
+      headers: {
+        "Accept": "application/json",
+        "content-type": "application/json"
+      },
+    );
+    var jsonResponse = jsonDecode(res.body);
+    prefs.setString("token", jsonResponse["token"]);
+    return res.statusCode;
+  }
+
+  
+
 }
