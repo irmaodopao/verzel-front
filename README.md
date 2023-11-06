@@ -19,7 +19,7 @@ Senha: adm
 - O usuário, inicialmente, terá acesso a apenas uma ação que será o botão de "+" no canto inferior direito, no qual irá redirecioná-lo para a tela de login ADM
 - Caso o usuário tente editar ou excluir algum veículo sem o login, o sistema o avisa que ele nao tem permissão de tais ações
 - Após logado, irá gerar um tokenJWT que possuí duração de 1h e todas as ações de CRUD estarão liberadas
-- Para cadastro de um veículo, basta apenas dar um clique no botão de "+" que irá te redirecionar para a tela de cadastro de veículo
-- Para exclusão de um veículo, basta apenas dar um clique que aparecerá um pop-up de confirmação de exclusão
-- Para edição de um veículo, basta clicar e segurar no veículo que deseja editar
+- Para cadastro de um veículo, basta apenas dar um clique ( apertar ) no botão de "+" que irá te redirecionar para a tela de cadastro de veículo
+- Para exclusão de um veículo, basta apenas dar um clique ( apertar ) no veículo que deseja excluir que aparecerá um pop-up de confirmação de exclusão
+- Para edição de um veículo, basta clicar ( apertar ) e segurar no veículo que deseja editar
 - Caso o tokenJWT expire, você irá ser redirecionado para a tela de login ADM avisando-o que seu token expirou!
