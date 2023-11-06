@@ -28,7 +28,6 @@ class AdminService {
       },
     );
     var jsonResponse = jsonDecode(res.body);
-    print(jsonResponse["token"]);
     prefs.setString("token", jsonResponse["token"] ?? "");
     return res.statusCode;
   }
