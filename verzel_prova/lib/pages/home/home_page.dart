@@ -88,7 +88,9 @@ class _HomePage extends State<HomePage> {
                         context,
                         "excluirVeiculo",
                         veiculo,
-                        _showDialogExclusao(veiculo, veiculos.data!));
+                       (){
+                         _showDialogExclusao(veiculo, veiculos.data!);
+                       });
                   },
                   onLongPress: () async {
                     FunctionsUtils.validateTokenAndRedirect(

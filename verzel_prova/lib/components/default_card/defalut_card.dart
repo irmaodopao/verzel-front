@@ -39,11 +39,12 @@ class DefaultCard extends StatelessWidget {
         ),
         margin: const EdgeInsets.only(bottom: 20.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
               width: double.infinity,
-              height: 300,
-              child: Image.memory(base64Decode(imagem))
+              height: 200,
+              child: Image.memory(base64Decode(imagem), fit: BoxFit.cover)
             ),
             Container(
               alignment: Alignment.centerLeft,

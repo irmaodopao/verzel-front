@@ -48,7 +48,6 @@ class _LoginAdmPage extends State<LoginAdmPage> {
                 buttonText: 'Entrar',
                 onPressed: () {
                   onLoginAdm();
-                  Navigator.of(context).pop();
                 }),
           ],
         ));
@@ -63,6 +62,10 @@ class _LoginAdmPage extends State<LoginAdmPage> {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context)
           .showSnackBar(const SnackBar(content: Text('Login não autorizado')));
+    } else {
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Login realizado com sucesso!')));
     }
   }
 }

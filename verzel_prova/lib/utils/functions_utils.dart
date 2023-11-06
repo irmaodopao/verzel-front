@@ -83,7 +83,7 @@ class FunctionsUtils {
 
   static void redirectToAdmLoginWhenTokenExpired(BuildContext context) {
     Navigator.of(context).pop();
-    Navigator.pushReplacement(
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const LoginAdmPage()),
     );
@@ -104,12 +104,12 @@ class FunctionsUtils {
 
   static void validateTokenAndRedirect(
       BuildContext context, String route,
-      [Veiculo? veiculo, Future<void>? showDialog]) async {
+      [Veiculo? veiculo, Function? showDialog]) async {
     var prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString('token');
     if (token != null && !FunctionsUtils.isTokenExpired(token)) {
       if (route == routeToString(Rotas.EXCLUIR)) {
-        showDialog;
+        showDialog!();
         return;
       }
       // ignore: use_build_context_synchronously
