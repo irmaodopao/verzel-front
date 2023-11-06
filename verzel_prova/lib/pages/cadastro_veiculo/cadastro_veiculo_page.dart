@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:verzel_prova/components/default_form/default_form.dart';
 import 'package:verzel_prova/components/default_page/default_page.dart';
 import 'package:verzel_prova/models/veiculo.dart';
-import 'package:verzel_prova/pages/home/home_page.dart';
 import 'package:verzel_prova/services/veiculo_service.dart';
 
 class CadastroVeiculoPage extends StatefulWidget {
@@ -28,23 +27,8 @@ class _CadastroVeiculoPage extends State<CadastroVeiculoPage> {
     return nomeController.text.isEmpty ||
         modeloController.text.isEmpty ||
         marcaController.text.isEmpty ||
-        valorController.text.isEmpty || 
+        valorController.text.isEmpty ||
         imageIn64 == null;
-  }
-
-  Future<void> pegarImagemGaleria() async {
-    final picker = ImagePicker();
-    // ignore: deprecated_member_use
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
-
-    if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
-
-      List<int> imageBytes = _image!.readAsBytesSync();
-      imageIn64 = base64Encode(imageBytes);
-    }
   }
 
   @override
@@ -65,7 +49,7 @@ class _CadastroVeiculoPage extends State<CadastroVeiculoPage> {
             valorController: valorController));
   }
 
-  onCriarVeiculo() async{
+  void onCriarVeiculo() async {
     if (!camposEstaoVazios()) {
       Veiculo veiculo = Veiculo();
       veiculo.nome = nomeController.text;
@@ -73,18 +57,26 @@ class _CadastroVeiculoPage extends State<CadastroVeiculoPage> {
       veiculo.marca = marcaController.text;
       veiculo.valor = double.parse(valorController.text);
       veiculo.foto = imageIn64;
-      await VeiculoService.createVeiculo(veiculo);
-      // ignore: use_build_context_synchronously
-      Navigator.of(context).pop();
-      // ignore: use_build_context_synchronously
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const HomePage()),
-      );
+      await VeiculoService.createVeiculo(veiculo, context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Preencha todos os campos!')),
       );
+    }
+  }
+
+  Future<void> pegarImagemGaleria() async {
+    final picker = ImagePicker();
+    // ignore: deprecated_member_use
+    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+
+      List<int> imageBytes = _image!.readAsBytesSync();
+      imageIn64 = base64Encode(imageBytes);
     }
   }
 }

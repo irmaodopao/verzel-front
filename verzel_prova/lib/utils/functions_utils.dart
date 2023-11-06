@@ -2,8 +2,14 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verzel_prova/components/defaut_button/default_button.dart';
 import 'package:verzel_prova/models/veiculo.dart';
+import 'package:verzel_prova/pages/cadastro_veiculo/cadastro_veiculo_page.dart';
+import 'package:verzel_prova/pages/editar_veiculo/editar_veiculo_page.dart';
+import 'package:verzel_prova/pages/home/home_page.dart';
+import 'package:verzel_prova/pages/login_adm/login_adm_page.dart';
+import 'package:verzel_prova/utils/rotas_enum.dart';
 
 class FunctionsUtils {
   static List<Veiculo>? ordenarPorValor(List<Veiculo> listaVeiculos) {
@@ -61,7 +67,8 @@ class FunctionsUtils {
     if (tokenParts.length != 3) {
       return true;
     }
-    String decodedPayload = String.fromCharCodes(base64Url.decode(tokenParts[1]));
+    String decodedPayload =
+        String.fromCharCodes(base64Url.decode(tokenParts[1]));
     Map<String, dynamic> payloadMap = jsonDecode(decodedPayload);
 
     if (payloadMap.containsKey('exp')) {
@@ -71,6 +78,56 @@ class FunctionsUtils {
       return DateTime.now().isAfter(expiryDateTime);
     } else {
       return true;
+    }
+  }
+
+  static void redirectToAdmLoginWhenTokenExpired(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const LoginAdmPage()),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+          content: Text('Seu token expirou! Faça seu login novamente')),
+    );
+  }
+
+   static void redirectToHomePage(BuildContext context) {
+    Navigator.of(context).pop();
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => const HomePage()),
+    );
+  }
+
+
+  static void validateTokenAndRedirect(
+      BuildContext context, String route,
+      [Veiculo? veiculo, Future<void>? showDialog]) async {
+    var prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('token');
+    if (token != null && !FunctionsUtils.isTokenExpired(token)) {
+      if (route == routeToString(Rotas.EXCLUIR)) {
+        showDialog;
+        return;
+      }
+      // ignore: use_build_context_synchronously
+      Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+        if (route == routeToString(Rotas.CADASTRAR)) {
+          return const CadastroVeiculoPage();
+        }
+        return EditarVeiculoPage(veiculo);
+      }));
+    } else {
+      if (route != routeToString(Rotas.CADASTRAR)) {
+        // ignore: use_build_context_synchronously
+        FunctionsUtils.defaultShowDialog(context, 'Atenção!',
+            'Você precisa estar logado para executar essa ação!', true);
+      } else {
+        // ignore: use_build_context_synchronously
+        Navigator.of(context).push(MaterialPageRoute(builder: (_) => const LoginAdmPage()));
+      }
     }
   }
 }

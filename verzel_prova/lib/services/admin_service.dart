@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:http/http.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:verzel_prova/env/environments.dart';
